@@ -118,7 +118,7 @@ public class JsonRPC implements ResourceLoaderAware {
         Logging.start(Logging.LEVEL_DEBUG, Category.tool);
 
         // If /etc/xos/xtreemfs/default_dir exists, get DIR address from it.
-        File defaultIrmConfigFile = new File("/etc/xos/xtreemfs/irm.properties");
+        File defaultIrmConfigFile = new File("/xtreemfs_data/irm.properties");
         if(!defaultIrmConfigFile.exists()) {
             defaultIrmConfigFile = getResource("WEB-INF/" + this.DEFAULT_DIR_CONFIG);
             if (defaultIrmConfigFile == null) { // for j-unit tests check this path too
