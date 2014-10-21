@@ -187,6 +187,42 @@ public class JSONRPCTest extends AbstractTestCase {
         assertFalse(response.contains(volume2));
     }
 
+    @Test
+    public void releaseAllReservations() throws JSONRPC2ParseException, JSONException {
+        System.out.println("createAndDeleteVolumes");
+
+        // create a volume
+        Resources resource = new Resources(
+                new Resource(
+                        "/"+dirAddress+"/storage/random",
+                        "xxx.xxx.xxx.xxx",
+                        "Storage",
+                        new Attributes(
+                                100.0,
+                                10.0,
+                                AccessTypes.RANDOM),
+                        new LibJSON.Cost()));
+
+        JSONRPC2Response res = callJSONRPC(METHOD.reserveResources, gson.toJson(resource));
+        checkSuccess(res, false);
+        Reservations resources = parseResult(res, Reservations.class);
+        System.out.println("IResID: " + resources.getReservations().iterator().next());
+
+        // create a second volume
+        res = callJSONRPC(METHOD.reserveResources, resource);
+        checkSuccess(res, false);
+        Reservations resources2 = parseResult(res, Reservations.class);
+        System.out.println("IResID: " + resources2.getReservations().iterator().next());
+
+        // release all reservations
+        res = callJSONRPC(METHOD.releaseAllResources, gson.toJson(null));
+
+        // check if list of reservations is empty
+        res = callJSONRPC(METHOD.listReservations);
+        checkSuccess(res, false);
+        Addresses volumes = parseResult(res, Addresses.class);
+        assertTrue(volumes.Addresses.size() == 0);
+    }
 
     /**
      * Creates 10 volumes and cleans up all volumes.

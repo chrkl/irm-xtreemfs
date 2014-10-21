@@ -13,6 +13,7 @@ import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.Auth;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.UserCredentials;
 import org.xtreemfs.pbrpc.generatedinterfaces.GlobalTypes.AccessControlPolicyType;
 import org.xtreemfs.pbrpc.generatedinterfaces.GlobalTypes.KeyValuePair;
+import org.xtreemfs.pbrpc.generatedinterfaces.MRC;
 import org.xtreemfs.pbrpc.generatedinterfaces.Scheduler;
 import org.xtreemfs.pbrpc.generatedinterfaces.Scheduler.freeResourcesResponse;
 
@@ -477,6 +478,29 @@ public class LibJSON {
         return res;
     }
 
+    public static void releaseAllResources(
+            String schedulerAddress,
+            InetSocketAddress[] dirAddresses,
+            UserCredentials uc,
+            Auth auth,
+            Client client) throws IOException {
+        MRC.Volumes volumes = client.listVolumes();
+        for(MRC.Volume v: volumes.getVolumesList()) {
+            String volume_name = stripVolumeName(v.getName());
+            // first delete the volume
+            client.deleteVolume(
+                    auth,
+                    uc,
+                    volume_name);
+
+            // now delete the reservation of rerources
+            client.deleteReservation(
+                    schedulerAddress,
+                    auth,
+                    uc,
+                    volume_name);
+        }
+    }
 
     @XmlRootElement(name="ReservationStati")
     @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)

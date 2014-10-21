@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.logging.Level;
@@ -84,7 +85,9 @@ public class JsonRPC implements ResourceLoaderAware {
 
         releaseResources,
 
-        listReservations
+        listReservations,
+
+        releaseAllResources
     }
 
     public JsonRPC(String defaultDirConfigFile) {
@@ -180,6 +183,7 @@ public class JsonRPC implements ResourceLoaderAware {
             this.dispatcher.register(new ResourceTypesHandler(this.client));
             this.dispatcher.register(new CalculateResourceCapacityHandler(this.client));
             this.dispatcher.register(new CalculateResourceAggHandler(this.client));
+            this.dispatcher.register(new ReleaseAllResourcesHandler((this.client)));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -439,6 +443,24 @@ public class JsonRPC implements ResourceLoaderAware {
             return new JSONRPC2Response(JSONParser.parseJSON(json), req.getID());
         }
 
+    }
+
+    public class ReleaseAllResourcesHandler extends AbstractRequestHandler {
+
+        public ReleaseAllResourcesHandler(Client c) {
+            super(c, new METHOD[]{METHOD.releaseAllResources});
+        }
+
+        @Override
+        public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
+            LibJSON.releaseAllResources(
+                    LibJSON.generateSchedulerAddress(schedulerAddress),
+                    dirAddresses,
+                    getGroups(),
+                    getAuth(adminPassword),
+                    client);
+            return new JSONRPC2Response(null);
+        }
     }
 
     private void addMangerToCrs(String crsUrl) {
