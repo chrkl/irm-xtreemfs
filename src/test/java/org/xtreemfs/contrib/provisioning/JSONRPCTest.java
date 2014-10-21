@@ -214,13 +214,19 @@ public class JSONRPCTest extends AbstractTestCase {
         Reservations resources2 = parseResult(res, Reservations.class);
         System.out.println("IResID: " + resources2.getReservations().iterator().next());
 
+        // check if list of reservations is not empty
+        res = callJSONRPC(METHOD.listReservations);
+        checkSuccess(res, false);
+        Addresses volumes = parseResult(res, Addresses.class);
+        assertTrue(volumes.Addresses.size() == 2);
+
         // release all reservations
         res = callJSONRPC(METHOD.releaseAllResources, gson.toJson(null));
 
         // check if list of reservations is empty
         res = callJSONRPC(METHOD.listReservations);
         checkSuccess(res, false);
-        Addresses volumes = parseResult(res, Addresses.class);
+        volumes = parseResult(res, Addresses.class);
         assertTrue(volumes.Addresses.size() == 0);
     }
 
