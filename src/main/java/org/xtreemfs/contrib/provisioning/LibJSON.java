@@ -484,7 +484,12 @@ public class LibJSON {
             UserCredentials uc,
             Auth auth,
             Client client) throws IOException {
-        MRC.Volumes volumes = client.listVolumes();
+        MRC.Volumes volumes;
+        try {
+            volumes = client.listVolumes();
+        } catch (IOException e) {
+            return;
+        }
         for(MRC.Volume v: volumes.getVolumesList()) {
             String volume_name = stripVolumeName(v.getName());
             // first delete the volume

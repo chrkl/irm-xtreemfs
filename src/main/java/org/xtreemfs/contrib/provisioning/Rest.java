@@ -1,6 +1,7 @@
 package org.xtreemfs.contrib.provisioning;
 
 import java.io.IOException;
+import java.util.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -45,7 +46,7 @@ public class Rest extends JsonRPC {
 
     @POST
     @Path("/releaseResources")
-    public Response<Object> releaseResources(Reservations res) {
+    public Response<Map<Object, Object>> releaseResources(Reservations res) {
         try {
             LibJSON.releaseResources(
                     res,
@@ -55,11 +56,11 @@ public class Rest extends JsonRPC {
                     client
             );
         } catch (Exception e) {
-            return new Response<Object>(
+            return new Response<Map<Object, Object>>(
                     null, new LibJSON.Error(e.getLocalizedMessage(), -1)
             );
         }
-        return new Response<Object>(null);
+        return new Response<Map<Object, Object>>(new HashMap<Object, Object>());
     }
 
     @POST
@@ -163,4 +164,21 @@ public class Rest extends JsonRPC {
         }
     }
 
+    @POST
+    @Path("/releaseAllResources")
+    public Response<Map<Object, Object>> releaseAllResources() {
+        try {
+            LibJSON.releaseAllResources(
+                    LibJSON.generateSchedulerAddress(schedulerAddress),
+                    dirAddresses,
+                    AbstractRequestHandler.getGroups(),
+                    AbstractRequestHandler.getAuth(adminPassword),
+                    client);
+        } catch(IOException e) {
+            return new Response<Map<Object, Object>>(
+                    null, new LibJSON.Error(e.getLocalizedMessage(), -1)
+            );
+        }
+        return new Response<Map<Object, Object>>(new HashMap<Object, Object>());
+    }
 }
