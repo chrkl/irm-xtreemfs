@@ -344,15 +344,16 @@ public class LibJSON {
                 auth,
                 uc);
 
-        ReserveResource reserve = resourceCapacity.getReserve();
-        ReleaseResource release = resourceCapacity.getRelease();
+        List<ReserveResource> reserve = resourceCapacity.getReserve();
+        List<ReleaseResource> release = resourceCapacity.getRelease();
 
         AccessTypes type = resourceCapacity.getResource().getAttributes().getAccessType();
         double remainingCapacity = resourceCapacity.getResource().getAttributes().getCapacity();
         double remainingThrough = resourceCapacity.getResource().getAttributes().getThroughput();
 
-        if (reserve != null && reserve.getAttributes() != null) {
-            for (Attributes attr : reserve.getAttributes()) {
+        if (reserve != null) {
+            for (ReserveResource res : reserve) {
+                Attributes attr = res.getAttributes();
                 try {
                     remainingCapacity -= attr.getCapacity();
                 } catch (Exception e) {
@@ -366,8 +367,9 @@ public class LibJSON {
             }
         }
 
-        if (release != null && release.getAttributes() != null) {
-            for (Attributes attr : release.getAttributes()) {
+        if (release != null) {
+            for (ReleaseResource rel : release) {
+                Attributes attr = rel.getAttributes();
                 try {
                     remainingCapacity += attr.getCapacity();
                 } catch (Exception e) {
@@ -813,36 +815,45 @@ public class LibJSON {
     public static class ResourceCapacity implements Serializable {
         private static final long serialVersionUID = -1408331636553103656L;
         public Resource Resource;
-        public ReserveResource Reserve;
-        public ReleaseResource Release;
+        public List<ReserveResource> Reserve;
+        public List<ReleaseResource> Release;
 
         public ResourceCapacity() {
             // no-args constructor
         }
 
-        public ResourceCapacity(Resource resource, ReserveResource reserve, ReleaseResource release) {
+        public ResourceCapacity(Resource resource, List<ReserveResource> reserve, List<ReleaseResource> release) {
             this.Resource = resource;
             this.Reserve = reserve;
             this.Release = release;
         }
 
+        public ResourceCapacity(Resource resource, ReserveResource reserve, ReleaseResource release) {
+            this.Resource = resource;
+            this.Reserve = new ArrayList<LibJSON.ReserveResource>();
+            this.Release = new ArrayList<LibJSON.ReleaseResource>();
+            this.Reserve.add(reserve);
+            this.Release.add(release);
+        }
+
         public Resource getResource() {
             return Resource;
         }
-        public void setResource(Resource resource) {
-            this.Resource = resource;
-        }
-        public ReserveResource getReserve() {
+
+        public List<ReserveResource> getReserve() {
             return Reserve;
         }
-        public void setReserve(ReserveResource reserve) {
-            this.Reserve = reserve;
+
+        public void setReserve(List<ReserveResource> reserve) {
+            Reserve = reserve;
         }
-        public ReleaseResource getRelease() {
+
+        public List<ReleaseResource> getRelease() {
             return Release;
         }
-        public void setRelease(ReleaseResource release) {
-            this.Release = release;
+
+        public void setRelease(List<ReleaseResource> release) {
+            Release = release;
         }
     }
 
@@ -850,7 +861,7 @@ public class LibJSON {
     @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
     public static class ReserveResource implements Serializable {
         private static final long serialVersionUID = 6310585568556634805L;
-        public List<Attributes> Attributes;
+        public Attributes Attributes;
 
         public ReserveResource() {
             // no-args constructor
@@ -858,14 +869,11 @@ public class LibJSON {
         public ReserveResource(Attributes attributes) {
             setAttributes(attributes);
         }
-        public List<Attributes> getAttributes() {
+        public Attributes getAttributes() {
             return Attributes;
         }
         public void setAttributes(Attributes attributes) {
-            if (this.Attributes == null) {
-                this.Attributes = new ArrayList<LibJSON.Attributes>();
-            }
-            this.Attributes.add(attributes);
+            this.Attributes = attributes;
         }
     }
 
@@ -873,7 +881,7 @@ public class LibJSON {
     @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
     public static class ReleaseResource implements Serializable {
         private static final long serialVersionUID = 8910269518815734323L;
-        public List<Attributes> Attributes;
+        public Attributes Attributes;
 
         public ReleaseResource() {
             // no-args constructor
@@ -881,14 +889,12 @@ public class LibJSON {
         public ReleaseResource(Attributes attributes) {
             setAttributes(attributes);
         }
-        public List<Attributes> getAttributes() {
+        public Attributes getAttributes() {
             return Attributes;
         }
         public void setAttributes(Attributes attributes) {
-            if (this.Attributes == null) {
-                this.Attributes = new ArrayList<LibJSON.Attributes>();
-            }
-            this.Attributes.add(attributes);    }
+            this.Attributes = attributes;
+        }
     }
 
 
