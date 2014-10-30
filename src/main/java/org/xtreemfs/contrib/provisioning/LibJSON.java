@@ -1,5 +1,6 @@
 package org.xtreemfs.contrib.provisioning;
 
+import com.google.gson.JsonObject;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.xtreemfs.common.libxtreemfs.Client;
@@ -390,19 +391,23 @@ public class LibJSON {
                 type == AccessTypes.RANDOM ? freeResources.getRandomThroughput() : freeResources.getStreamingThroughput(),
                 remainingThrough);
 
-        return new ResourceMapper(
-                new Resource(
-                        resourceCapacity.getResource().getID(),
-                        resourceCapacity.getResource().getIP(),
-                        resourceCapacity.getResource().getType(),
-                        new Attributes(
-                                remainingCapacity,
-                                remainingThrough,
-                                type
-                        ),
-                        resourceCapacity.getResource().getCost()
-                )
-        );
+        if(remainingCapacity > 0 && remainingThrough > 0) {
+            return new ResourceMapper(
+                    new Resource(
+                            resourceCapacity.getResource().getID(),
+                            resourceCapacity.getResource().getIP(),
+                            resourceCapacity.getResource().getType(),
+                            new Attributes(
+                                    remainingCapacity,
+                                    remainingThrough,
+                                    type
+                            ),
+                            resourceCapacity.getResource().getCost()
+                    )
+            );
+        } else {
+            throw new IOException("Requested reservation cannot be served");
+        }
     }
 
 
