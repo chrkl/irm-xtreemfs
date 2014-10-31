@@ -276,7 +276,7 @@ public class JsonRPC implements ResourceLoaderAware {
 
             ResourceCapacity res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), ResourceCapacity.class);
 
-            ResourceMapper resource = LibJSON.calculateResourceCapacity(
+            Map<String, Resource> resource = LibJSON.calculateResourceCapacity(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     getGroups(),

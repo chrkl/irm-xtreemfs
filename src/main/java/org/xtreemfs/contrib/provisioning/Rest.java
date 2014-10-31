@@ -82,16 +82,16 @@ public class Rest extends JsonRPC {
 
     @POST
     @Path("/calculateResourceCapacity")
-    public Response<ResourceMapper> calculateResourceCapacity(ResourceCapacity res) {
+    public Response<Map<String, Resource>> calculateResourceCapacity(ResourceCapacity res) {
         try {
-            return new Response<ResourceMapper>(LibJSON.calculateResourceCapacity(
+            return new Response<Map<String, Resource>>(LibJSON.calculateResourceCapacity(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     AbstractRequestHandler.getGroups(),
                     AbstractRequestHandler.getAuth(this.adminPassword),
                     client));
         } catch (Exception e) {
-            return new Response<ResourceMapper>(
+            return new Response<Map<String, Resource>>(
                     null, new LibJSON.Error(e.getLocalizedMessage(), -1)
             );
         }

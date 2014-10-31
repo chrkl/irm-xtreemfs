@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 /**
@@ -332,7 +329,7 @@ public class LibJSON {
     }
 
 
-    public static ResourceMapper calculateResourceCapacity(
+    public static Map<String, Resource> calculateResourceCapacity(
             ResourceCapacity resourceCapacity,
             String schedulerAddress,
             UserCredentials uc,
@@ -391,8 +388,11 @@ public class LibJSON {
                 type == AccessTypes.RANDOM ? freeResources.getRandomThroughput() : freeResources.getStreamingThroughput(),
                 remainingThrough);
 
+        HashMap<String, Resource> result = new HashMap<String, Resource>();
+
         if(remainingCapacity > 0 && remainingThrough > 0) {
-            return new ResourceMapper(
+
+            result.put("Resource",
                     new Resource(
                             resourceCapacity.getResource().getID(),
                             resourceCapacity.getResource().getIP(),
@@ -403,11 +403,10 @@ public class LibJSON {
                                     type
                             ),
                             resourceCapacity.getResource().getCost()
-                    )
-            );
-        } else {
-            throw new IOException("Requested reservation cannot be served");
+                    ));
         }
+
+        return result;
     }
 
 
