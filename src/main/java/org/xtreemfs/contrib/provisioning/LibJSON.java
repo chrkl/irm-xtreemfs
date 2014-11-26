@@ -390,7 +390,7 @@ public class LibJSON {
 
         HashMap<String, Resource> result = new HashMap<String, Resource>();
 
-        if(remainingCapacity > 0 && remainingThrough > 0) {
+        if(remainingCapacity >= 0 && remainingThrough >= 0) {
 
             result.put("Resource",
                     new Resource(
