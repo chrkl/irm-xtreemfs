@@ -118,6 +118,103 @@ public class JSONRPCTest extends AbstractTestCase {
         checkSuccess(res, false);
     }
 
+    /**
+     * Test resource aggregation.
+     * @throws JSONRPC2ParseException
+     * @throws JSONException
+     */
+    @Test
+    public void calculateResourceCapacityWithInvalidInput() throws JSONRPC2ParseException, JSONException {
+        System.out.println("calculateResourceCapacity");
+
+        double originalThroughput = 10.0;
+        double reserveThroughput = 8.0;
+        double releaseThroughput = 9.0;
+
+        double originalCapacity = 100.0;
+        double reserveCapacity = 80.0;
+        double releaseCapacity = 90.0;
+
+        ResourceCapacity rc = new ResourceCapacity(
+                new Resource(
+                        "/"+dirAddress+"/storage/random",
+                        "xxx.xxx.xxx.xxx",
+                        "Storage",
+                        new Attributes(
+                                originalCapacity,
+                                originalThroughput,
+                                AccessTypes.RANDOM),
+                        new LibJSON.Cost()
+                ),
+                new LibJSON.ReserveResource(
+                        new Attributes(
+                                reserveCapacity,
+                                reserveThroughput,
+                                AccessTypes.SEQUENTIAL)
+                ),
+                new LibJSON.ReleaseResource(
+                        new Attributes(
+                                releaseCapacity,
+                                releaseThroughput,
+                                AccessTypes.RANDOM)
+                )
+        );
+
+        JSONRPC2Response res = callJSONRPC(METHOD.calculateResourceCapacity, rc);
+        ResourceMapper resources = parseResult(res, ResourceMapper.class);
+
+        assertTrue(resources.getResource() == null);
+
+        checkSuccess(res, false);
+    }
+
+    /**
+     * Test resource aggregation.
+     * @throws JSONRPC2ParseException
+     * @throws JSONException
+     */
+    @Test
+    public void calculateResourceCapacityWithoutRemainingResources() throws JSONRPC2ParseException, JSONException {
+        System.out.println("calculateResourceCapacity");
+
+        double originalThroughput = 10.0;
+        double originalCapacity = 100.0;
+
+        ResourceCapacity rc = new ResourceCapacity(
+                new Resource(
+                        "/"+dirAddress+"/storage/random",
+                        "xxx.xxx.xxx.xxx",
+                        "Storage",
+                        new Attributes(
+                                originalCapacity,
+                                originalThroughput,
+                                AccessTypes.RANDOM),
+                        new LibJSON.Cost()
+                ),
+                new LibJSON.ReserveResource(
+                        new Attributes(
+                                originalCapacity,
+                                originalThroughput,
+                                AccessTypes.RANDOM)
+                ),
+                new LibJSON.ReleaseResource(
+                        new Attributes(
+                                0.0,
+                                0.0,
+                                AccessTypes.RANDOM)
+                )
+        );
+
+        JSONRPC2Response res = callJSONRPC(METHOD.calculateResourceCapacity, rc);
+        ResourceMapper resources = parseResult(res, ResourceMapper.class);
+        double capacity = resources.getResource().getAttributes().getCapacity();
+        double throughput = resources.getResource().getAttributes().getThroughput();
+
+        assertTrue(capacity == 0.0);
+        assertTrue(throughput == 0.0);
+
+        checkSuccess(res, false);
+    }
 
     /**
      * Test getting all resource types.
