@@ -354,7 +354,7 @@ public class LibJSON {
         if (reserve != null) {
             for (ReserveResource res : reserve) {
                 Attributes attr = res.getAttributes();
-                if(attr.getAccessType() != type) {
+                if(attr.getAccessType() == null || attr.getAccessType() != type) {
                     // return empty result (=> invalid request), if access types does not match
                     return result;
                 }
@@ -374,7 +374,7 @@ public class LibJSON {
         if (release != null) {
             for (ReleaseResource rel : release) {
                 Attributes attr = rel.getAttributes();
-                if(attr.getAccessType() != type) {
+                if(attr.getAccessType() == null || attr.getAccessType() != type) {
                     // return empty result (=> invalid request), if access types does not match
                     return result;
                 }
