@@ -349,9 +349,15 @@ public class LibJSON {
         double remainingCapacity = resourceCapacity.getResource().getAttributes().getCapacity();
         double remainingThrough = resourceCapacity.getResource().getAttributes().getThroughput();
 
+        HashMap<String, Resource> result = new HashMap<String, Resource>();
+
         if (reserve != null) {
             for (ReserveResource res : reserve) {
                 Attributes attr = res.getAttributes();
+                if(attr.getAccessType() != type) {
+                    // return empty result (=> invalid request), if access types does not match
+                    return result;
+                }
                 try {
                     remainingCapacity -= attr.getCapacity();
                 } catch (Exception e) {
@@ -368,6 +374,10 @@ public class LibJSON {
         if (release != null) {
             for (ReleaseResource rel : release) {
                 Attributes attr = rel.getAttributes();
+                if(attr.getAccessType() != type) {
+                    // return empty result (=> invalid request), if access types does not match
+                    return result;
+                }
                 try {
                     remainingCapacity += attr.getCapacity();
                 } catch (Exception e) {
@@ -387,8 +397,6 @@ public class LibJSON {
         remainingThrough = Math.min(
                 type == AccessTypes.RANDOM ? freeResources.getRandomThroughput() : freeResources.getStreamingThroughput(),
                 remainingThrough);
-
-        HashMap<String, Resource> result = new HashMap<String, Resource>();
 
         if(remainingCapacity >= 0 && remainingThrough >= 0) {
 
