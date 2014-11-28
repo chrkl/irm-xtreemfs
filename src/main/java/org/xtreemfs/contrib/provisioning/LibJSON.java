@@ -114,7 +114,7 @@ public class LibJSON {
                 if (resource.Type.toLowerCase().equals("storage")) {
                     Integer capacity = (int)resource.Attributes.Capacity;
                     Integer throughput = (int)resource.Attributes.Throughput;
-                    AccessTypes accessType = resource.Attributes.AccessType;
+                    AccessTypes accessType = resource.Attributes.AccessType != null?resource.Attributes.AccessType:AccessTypes.SEQUENTIAL;
                     boolean randomAccess = accessType == AccessTypes.RANDOM;
 
                     int octalMode = Integer.parseInt("700", 8);
