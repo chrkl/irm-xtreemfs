@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.xtreemfs.contrib.provisioning.JsonRPC.METHOD;
 import org.xtreemfs.contrib.provisioning.LibJSON.Addresses;
-import org.xtreemfs.contrib.provisioning.LibJSON.Reservations;
+import org.xtreemfs.contrib.provisioning.LibJSON.ReservationID;
 import org.xtreemfs.foundation.json.JSONException;
 import org.xtreemfs.foundation.json.JSONParser;
 import org.xtreemfs.foundation.json.JSONString;
@@ -187,12 +187,12 @@ public abstract class AbstractTestCase {
                     System.out.println("deleting Volume " + volume);
 
                     // delete the second volume
-                    Reservations reservations = new Reservations(
+                    ReservationID reservations = new ReservationID(
                             volume
                     );
 
                     res = callJSONRPC(
-                            METHOD.releaseResources,
+                            METHOD.releaseReservation,
                             reservations);
 
                     checkSuccess(res, false);

@@ -71,23 +71,25 @@ public class JsonRPC implements ResourceLoaderAware {
     protected Gson gson = new Gson();
 
     enum METHOD {
-        getResourceTypes,
+      getResources,
+     
+      getAllocSpec,
+        
+      computeCapacity,
 
-        calculateResourceCapacity,
+      createReservation,
 
+      checkReservation,
+      
+      releaseReservation,
+
+      releaseAllReservations,
+
+      getMetrics,
+
+      // not needed??      
         calculateResourceAgg,
-
-        getAvailableResources,
-
-        reserveResources,
-
-        verifyResources,
-
-        releaseResources,
-
         listReservations,
-
-        releaseAllResources
     }
 
     public JsonRPC(String defaultDirConfigFile) {
@@ -175,15 +177,15 @@ public class JsonRPC implements ResourceLoaderAware {
 
             // Volume handlers
             this.dispatcher.register(new ListReservationsHandler(this.client));
-            this.dispatcher.register(new ReserveResourcesHandler(this.client));
-            this.dispatcher.register(new ReleaseResourcesHandler(this.client));
-            this.dispatcher.register(new VerifyResources(this.client));
+            this.dispatcher.register(new CreateReservationHandler(this.client));
+            this.dispatcher.register(new ReleaseReservationHandler(this.client));
+            this.dispatcher.register(new CheckReservation(this.client));
             this.dispatcher.register(new AvailableResources(this.client));
 
-            this.dispatcher.register(new ResourceTypesHandler(this.client));
-            this.dispatcher.register(new CalculateResourceCapacityHandler(this.client));
+            this.dispatcher.register(new AllocSpecHandler(this.client));
+            this.dispatcher.register(new ComputeCapacityHandler(this.client));
             this.dispatcher.register(new CalculateResourceAggHandler(this.client));
-            this.dispatcher.register(new ReleaseAllResourcesHandler((this.client)));
+            this.dispatcher.register(new ReleaseAllReservationsHandler((this.client)));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -263,10 +265,10 @@ public class JsonRPC implements ResourceLoaderAware {
     /**
      * Implements a handler for the
      */
-    public class CalculateResourceCapacityHandler extends AbstractRequestHandler {
+    public class ComputeCapacityHandler extends AbstractRequestHandler {
 
-        public CalculateResourceCapacityHandler(Client c) {
-            super(c, new METHOD[]{METHOD.calculateResourceCapacity});
+        public ComputeCapacityHandler(Client c) {
+            super(c, new METHOD[]{METHOD.computeCapacity});
         }
 
         // Processes the requests
@@ -276,7 +278,7 @@ public class JsonRPC implements ResourceLoaderAware {
 
             ResourceCapacity res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), ResourceCapacity.class);
 
-            Map<String, Resource> resource = LibJSON.calculateResourceCapacity(
+            Map<String, Resource> resource = LibJSON.computeCapacity(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     getGroups(),
@@ -289,31 +291,57 @@ public class JsonRPC implements ResourceLoaderAware {
     }
 
     /**
-     * Implements a handler for the
+     * Implements a handler for the 
      */
-    public class ResourceTypesHandler extends AbstractRequestHandler {
+    public class MetricsHandler extends AbstractRequestHandler {
 
-        public ResourceTypesHandler(Client c) {
-            super(c, new METHOD[]{METHOD.getResourceTypes});
+        public MetricsHandler(Client c) {
+            super(c, new METHOD[]{METHOD.getMetrics});
         }
 
         // Processes the requests
         @Override
         public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
-            Types resource = LibJSON.getResourceTypes();
+
+          MetricReq res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), MetricReq.class);
+          
+          MetricResp resource = LibJSON.getMetrics(
+              res,
+              LibJSON.generateSchedulerAddress(schedulerAddress),
+              getGroups(),
+              getAuth(JsonRPC.this.adminPassword),
+              client);
+          
+          JSONString json = new JSONString(gson.toJson(resource));
+          return new JSONRPC2Response(JSONParser.parseJSON(json), req.getID());
+        }
+    }
+
+    /**
+     * Implements a handler for the 
+     */
+    public class AllocSpecHandler extends AbstractRequestHandler {
+
+        public AllocSpecHandler(Client c) {
+            super(c, new METHOD[]{METHOD.getAllocSpec});
+        }
+
+        // Processes the requests
+        @Override
+        public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
+            Types resource = LibJSON.getAllocSpec();
             JSONString json = new JSONString(gson.toJson(resource));
             return new JSONRPC2Response(JSONParser.parseJSON(json), req.getID());
         }
     }
 
-
     /**
      * Implements a handler for the
      */
-    public class ReserveResourcesHandler extends AbstractRequestHandler {
+    public class CreateReservationHandler extends AbstractRequestHandler {
 
-        public ReserveResourcesHandler(Client c) {
-            super(c, new METHOD[]{METHOD.reserveResources});
+        public CreateReservationHandler(Client c) {
+            super(c, new METHOD[]{METHOD.createReservation});
         }
 
         // Processes the requests
@@ -321,9 +349,9 @@ public class JsonRPC implements ResourceLoaderAware {
         @Override
         public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
 
-            Resources res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), Resources.class);
+            Allocation res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), Allocation.class);
 
-            Reservations reservations = LibJSON.reserveResources(
+            ReservationID reservations = LibJSON.createReservation(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     dirAddresses,
@@ -341,19 +369,19 @@ public class JsonRPC implements ResourceLoaderAware {
     /**
      * Implements a handler for the "releaseResources" JSON-RPC method
      */
-    public class ReleaseResourcesHandler extends AbstractRequestHandler {
+    public class ReleaseReservationHandler extends AbstractRequestHandler {
 
-        public ReleaseResourcesHandler(Client c) {
-            super(c, new METHOD[]{METHOD.releaseResources});
+        public ReleaseReservationHandler(Client c) {
+            super(c, new METHOD[]{METHOD.releaseReservation});
         }
 
         // Processes the requests
         @Override
         @SuppressWarnings("unchecked")
         public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
-            Reservations res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), Reservations.class);
+            ReservationID res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), ReservationID.class);
 
-            LibJSON.releaseResources(
+            LibJSON.releaseReservation(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     getGroups(),
@@ -368,20 +396,19 @@ public class JsonRPC implements ResourceLoaderAware {
     /**
      * Implements a handler for the "checkReservation" JSON-RPC method
      */
-    public class VerifyResources extends AbstractRequestHandler {
+    public class CheckReservation extends AbstractRequestHandler {
 
-        public VerifyResources(Client c) {
-            super(c, new METHOD[]{METHOD.verifyResources});
+        public CheckReservation(Client c) {
+            super(c, new METHOD[]{METHOD.checkReservation});
         }
 
         // Processes the requests
         @Override
         @SuppressWarnings("unchecked")
         public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
-            Reservations res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), Reservations.class);
+            ReservationID res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), ReservationID.class);
 
-
-            ReservationStati reservStat = LibJSON.verifyResources(
+            ReservationStati reservStat = LibJSON.checkReservation(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     dirAddresses,
@@ -418,20 +445,20 @@ public class JsonRPC implements ResourceLoaderAware {
 
     /**
      *  Implements a handler for the
-     *    "getAvailableResources"
+     *    "getResources"
      *  JSON-RPC method
      */
     public class AvailableResources extends AbstractRequestHandler {
 
         public AvailableResources(Client c) {
-            super(c, new METHOD[]{METHOD.getAvailableResources});
+            super(c, new METHOD[]{METHOD.getResources});
         }
 
         // Processes the requests
         @Override
         public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
 
-            Resources res = LibJSON.getAvailableResources(
+            Resources res = LibJSON.getResources(
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     dirAddresses,
                     getGroups(),
@@ -445,15 +472,15 @@ public class JsonRPC implements ResourceLoaderAware {
 
     }
 
-    public class ReleaseAllResourcesHandler extends AbstractRequestHandler {
+    public class ReleaseAllReservationsHandler extends AbstractRequestHandler {
 
-        public ReleaseAllResourcesHandler(Client c) {
-            super(c, new METHOD[]{METHOD.releaseAllResources});
+        public ReleaseAllReservationsHandler(Client c) {
+            super(c, new METHOD[]{METHOD.releaseAllReservations});
         }
 
         @Override
         public JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception {
-            LibJSON.releaseAllResources(
+            LibJSON.releaseAllReservations(
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     dirAddresses,
                     getGroups(),
