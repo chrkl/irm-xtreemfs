@@ -330,7 +330,7 @@ public class JSONRPCTest extends AbstractTestCase {
 
       boolean found = false;
       for (ReservationStatus status : result2.getInstances().values()) {
-        if (status.Address.equals(volumeName.getReservationID().iterator().next())) {
+        if (status.Address.contains(volumeName.getReservationID().iterator().next())) {
           found = true;
           break;
         }
