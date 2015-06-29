@@ -510,18 +510,18 @@ public class JsonRPC implements ResourceLoaderAware {
         String url = getAddManagerURL(crsUrl);
         Webb webb = Webb.create();
         com.goebl.david.Response response = webb.post(url).header("Content-Type", "application/json")
-                .body("{\"Manager\": \"IRM\", \"Hostname\": \"" + LibJSON.getMyAddress() + "\", \"Port\": \"8080\", \"Name\": \"IRM-XtreemFS\"}")
+                .body("{\"Address\": \"" + LibJSON.getMyAddress() + "\", \"Port\": \"8080\", \"Name\": \"IRM-XtreemFS\"}")
                 .asJsonObject();
         response.getBody();
     }
 
     private String getAddManagerURL(String crsUrl) {
-        if(crsUrl.endsWith("/method/addManager")) {
+        if(crsUrl.endsWith("/addManager")) {
             return crsUrl;
         } else if (crsUrl.endsWith("/")) {
-            return crsUrl + "method/addManager";
+            return crsUrl + "addManager";
         } else {
-            return crsUrl + "/method/addManager";
+            return crsUrl + "/addManager";
         }
     }
 }
