@@ -186,6 +186,7 @@ public class JsonRPC implements ResourceLoaderAware {
             this.dispatcher.register(new ComputeCapacityHandler(this.client));
             this.dispatcher.register(new CalculateResourceAggHandler(this.client));
             this.dispatcher.register(new ReleaseAllReservationsHandler((this.client)));
+            this.dispatcher.register(new MetricsHandler((this.client)));
 
         } catch (Exception e) {
             e.printStackTrace();

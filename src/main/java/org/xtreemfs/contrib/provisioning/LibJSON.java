@@ -96,12 +96,20 @@ public class LibJSON {
       Auth auth,
       Client client
       ) {
+    MetricResp response = new MetricResp();
+    
     for (int i = 0; i < res.Address.size(); i++) {
       String address = res.Address.get(i);
       int entry = res.Entry.get(i);
-      // TODO
+      
+      // TODO read real values
+      HashMap<String, String> metric = new HashMap<String, String>();
+      metric.put("CAPACITY_UTILIZATION", "");
+      metric.put("THROUGHPUT_UTILIZATION", "");
+
+      response.addInstance(address, metric);
     }
-    return new MetricResp();
+    return response;
   }
   
   
@@ -866,23 +874,29 @@ public class LibJSON {
   public static class MetricResp implements Serializable {
     private static final long serialVersionUID = 1603978614536722497L;
 
-    //    public Map<String, MetricCSV> Instances;
+        public Map<String, Map<String, String>> Instances;
     public MetricResp() {
       // no-args constructor
     }
-//    public MetricRes(Map<String, MetricCSV> instances) {
-//      this.Instances = instances;
-//    }
-//    public MetricRes(String address, MetricCSV entry) {
-//      this.Instances = new ArrayList<String>();
-//      this.Instances.put(address, entry);
-//    }
-//    public Map<String, MetricCSV> getInstances() {
-//      return Instances;
-//    }
-//    public void setInstances(Map<String, MetricCSV> instances) {
-//      Instances = instances;
-//    }
+    public MetricResp(Map<String, Map<String, String>> instances) {
+      this.Instances = instances;
+    }
+    public MetricResp(String address, Map<String, String> entry) {
+      addInstance(address, entry);
+    }
+    public Map<String, Map<String, String>> getInstances() {
+      return Instances;
+    }
+    public void setInstances(Map<String, Map<String, String>> instances) {
+      Instances = instances;
+    }
+    
+    public void addInstance(String address, Map<String, String> instance) {
+      if (Instances == null) {
+        Instances = new LinkedHashMap<String, Map<String, String>>();
+      }
+      Instances.put(address,  instance);
+    }
   }  
   
   @XmlRootElement(name="Aggregation")

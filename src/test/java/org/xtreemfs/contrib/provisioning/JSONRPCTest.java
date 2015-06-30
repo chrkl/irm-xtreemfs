@@ -10,6 +10,8 @@ package org.xtreemfs.contrib.provisioning;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xtreemfs.common.ReplicaUpdatePolicies;
@@ -18,6 +20,8 @@ import org.xtreemfs.contrib.provisioning.LibJSON.AccessTypes;
 import org.xtreemfs.contrib.provisioning.LibJSON.Addresses;
 import org.xtreemfs.contrib.provisioning.LibJSON.Allocation;
 import org.xtreemfs.contrib.provisioning.LibJSON.Attributes;
+import org.xtreemfs.contrib.provisioning.LibJSON.MetricReq;
+import org.xtreemfs.contrib.provisioning.LibJSON.MetricResp;
 import org.xtreemfs.contrib.provisioning.LibJSON.ReservationStati;
 import org.xtreemfs.contrib.provisioning.LibJSON.ReservationStatus;
 import org.xtreemfs.contrib.provisioning.LibJSON.ReservationID;
@@ -438,5 +442,26 @@ public class JSONRPCTest extends AbstractTestCase {
     checkSuccess(res, false);
   }
 
+  
+  /**
+   * Get the metrics
+   * @throws JSONRPC2ParseException
+   * @throws JSONException
+   */
+  @Test
+  public void getMetric() throws JSONRPC2ParseException, JSONException {
+    System.out.println("getMetric");
+
+    // create a volume
+    MetricReq resource = new MetricReq(
+        Arrays.asList(new String[]{"addr1", "addr2"}), 
+        Arrays.asList(new Integer[]{1,2}));
+
+    JSONRPC2Response res = callJSONRPC(METHOD.getMetrics, resource);
+    checkSuccess(res, false);
+    
+    MetricResp result2 = parseResult(res, MetricResp.class);
+
+  }
 
 }

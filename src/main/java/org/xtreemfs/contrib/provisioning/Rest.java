@@ -67,24 +67,6 @@ public class Rest extends JsonRPC {
     }
     
     @POST
-    @Path("/getMetrics")
-    public Response<MetricResp> getMetrics(MetricReq res) {
-        try {
-          return new Response<MetricResp>(LibJSON.getMetrics(
-                    res,
-                    LibJSON.generateSchedulerAddress(schedulerAddress),
-                    AbstractRequestHandler.getGroups(),
-                    AbstractRequestHandler.getAuth(this.adminPassword),
-                    client));
-          
-        } catch (Exception e) {
-            return new Response<MetricResp>(
-                    null, new LibJSON.Error(e.getLocalizedMessage(), -1)
-            );
-        }
-    }
-
-    @POST
     @Path("/calculateResourceAgg")
     @Deprecated
     public Response<Resource> calculateResourceAgg(Resources res) {
@@ -171,7 +153,25 @@ public class Rest extends JsonRPC {
         }
     }
 
-
+    @POST
+    @Path("/getMetrics")
+    public Response<MetricResp> getMetrics(MetricReq res) {
+        try {
+            return new Response<MetricResp>(
+                    LibJSON.getMetrics(
+                            res,
+                            LibJSON.generateSchedulerAddress(schedulerAddress),
+                            AbstractRequestHandler.getGroups(),
+                            AbstractRequestHandler.getAuth(adminPassword),
+                            client)
+            );
+        } catch (Exception e) {
+            return new Response<MetricResp>(
+                    null, new LibJSON.Error(e.getLocalizedMessage(), -1)
+            );
+        }
+    }
+    
     @GET
     @Path("/listReservations")
     public Response<Addresses> listReservations() {
