@@ -1,5 +1,8 @@
 #!/bin/bash
 
+apt-get-update
+apt-get install maven
+
 mvn install:install-file -Dfile=lib/XtreemFS.jar -DgroupId=org.xtreemfs -DartifactId=xtreemfs -Dversion=1.4-4.1 -Dpackaging=jar
 mvn install:install-file -Dfile=lib/Foundation.jar -DgroupId=org.xtreemfs.foundation -DartifactId=xtreemfs-foundation -Dversion=1.4-4.1 -Dpackaging=jar
 mvn install:install-file -Dfile=lib/Flease.jar -DgroupId=org.xtreemfs -DartifactId=xtreemfs-flease -Dversion=1.4-4.1 -Dpackaging=jar
