@@ -482,13 +482,12 @@ public class JSONRPCTest extends AbstractTestCase {
 
     MetricReq metricResource = new MetricReq(
         Arrays.asList(new String[]{ resources.getReservationID().iterator().next() }),
-        Arrays.asList(new Integer[]{}));
+        Arrays.asList(new Integer[]{ 0 }));
 
     JSONRPC2Response metricRes = callJSONRPC(METHOD.getMetrics, metricResource);
-    checkSuccess(res, false);
+    checkSuccess(metricRes, false);
     
     MetricResp result2 = parseResult(metricRes, MetricResp.class);
-    System.out.println(result2);
   }
 
 }

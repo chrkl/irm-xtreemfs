@@ -104,13 +104,16 @@ public class LibJSON {
     
     for (int i = 0; i < res.Address.size(); i++) {
       String address = res.Address.get(i);
-      //int entry = res.Entry.get(i);
-      
-      // TODO read real values
+      int entry = 0;
+      if(res.Entry.size() >= i) {
+        entry = res.Entry.get(i);
+      }
+
+      //TODO: Check which monitors should be active
       HashMap<String, String> metric = new HashMap<String, String>();
       String capacityUtilization = capacityMonitor.getCapacityUtilization(stripVolumeName(address), 0, -1);
+
       metric.put("CAPACITY_UTILIZATION", capacityUtilization);
-      metric.put("THROUGHPUT_UTILIZATION", "");
 
       response.addInstance(address, metric);
     }
