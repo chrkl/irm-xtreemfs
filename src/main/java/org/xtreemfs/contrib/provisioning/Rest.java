@@ -36,6 +36,7 @@ public class Rest extends JsonRPC {
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     dirAddresses,
+                    sslOptions,
                     AbstractRequestHandler.getGroups(),
                     AbstractRequestHandler.getAuth(this.adminPassword),
                     client));

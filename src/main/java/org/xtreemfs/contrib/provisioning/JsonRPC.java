@@ -104,7 +104,6 @@ public class JsonRPC implements ResourceLoaderAware {
         this.dir_port = DEFAULT_DIR_PORT;
     }
 
-    @Override
     public void setResourceLoader(ResourceLoader arg) {
         this.resourceLoader = arg;
     }
@@ -151,6 +150,8 @@ public class JsonRPC implements ResourceLoaderAware {
         if(config != null) {
             LibJSON.setIrmConfig(config);
         }
+
+        LibJSON.setCapacityMonitor(new CapacityMonitor());
 
         Logger.getLogger(JsonRPC.class.getName()).log(Level.INFO, "Connecting to DIR-Address: " + this.dirAddresses[0].getAddress().getCanonicalHostName());
 
@@ -356,6 +357,7 @@ public class JsonRPC implements ResourceLoaderAware {
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     dirAddresses,
+                    sslOptions,
                     getGroups(),
                     getAuth(JsonRPC.this.adminPassword),
                     client);

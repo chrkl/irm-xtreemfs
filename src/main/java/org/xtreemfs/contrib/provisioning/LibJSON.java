@@ -8,7 +8,6 @@ import org.xtreemfs.common.libxtreemfs.Volume;
 import org.xtreemfs.common.libxtreemfs.exceptions.AddressToUUIDNotFoundException;
 import org.xtreemfs.common.libxtreemfs.exceptions.PosixErrorException;
 import org.xtreemfs.common.libxtreemfs.exceptions.VolumeNotFoundException;
-import org.xtreemfs.contrib.provisioning.LibJSON.MetricReq;
 import org.xtreemfs.foundation.SSLOptions;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.Auth;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.UserCredentials;
@@ -35,9 +34,14 @@ import java.util.*;
 public class LibJSON {
 
   private static IRMConfig irmConfig = null;
+  private static CapacityMonitor capacityMonitor = null;
 
   public static void setIrmConfig(IRMConfig config) {
     LibJSON.irmConfig = config;
+  }
+
+  public static void setCapacityMonitor(CapacityMonitor capacityMonitor) {
+    LibJSON.capacityMonitor = capacityMonitor;
   }
 
   public static Volume openVolume(
@@ -100,11 +104,12 @@ public class LibJSON {
     
     for (int i = 0; i < res.Address.size(); i++) {
       String address = res.Address.get(i);
-      int entry = res.Entry.get(i);
+      //int entry = res.Entry.get(i);
       
       // TODO read real values
       HashMap<String, String> metric = new HashMap<String, String>();
-      metric.put("CAPACITY_UTILIZATION", "");
+      String capacityUtilization = capacityMonitor.getCapacityUtilization(stripVolumeName(address), 0, -1);
+      metric.put("CAPACITY_UTILIZATION", capacityUtilization);
       metric.put("THROUGHPUT_UTILIZATION", "");
 
       response.addInstance(address, metric);
@@ -117,6 +122,7 @@ public class LibJSON {
       Allocation res,
       String schedulerAddress,
       InetSocketAddress[] dirAddresses,
+      SSLOptions sslOptions,
       UserCredentials uc,
       Auth auth,
       Client client) throws Exception {
@@ -155,8 +161,14 @@ public class LibJSON {
           // create a string similar to:
           // [<protocol>://]<DIR-server-address>[:<DIR-server-port>]/<Volume Name>
           reservations.addAll(new ReservationID(
-              createNormedVolumeName(volume_name, dirAddresses)
-              ));
+                  createNormedVolumeName(volume_name, dirAddresses)
+          ));
+
+          if(res.getMonitor().Storage.containsKey("CAPACITY_UTILIZATION")) {
+            int pollInterval = (res.getMonitor().PollTime / 1000) *
+                    res.getMonitor().getStorage().get("CAPACITY_UTILIZATION").getPollTimeMultiplier();
+            LibJSON.capacityMonitor.addVolume(client, sslOptions, uc, auth, volume_name, pollInterval);
+          }
         }
       }
       return reservations;
@@ -190,19 +202,20 @@ public class LibJSON {
       for (String volume : res.getReservationID()) {
 
         String volume_name = stripVolumeName(volume);
+        LibJSON.capacityMonitor.removeVolume(volume_name);
 
         // first delete the volume
         client.deleteVolume(
-            auth,
-            uc,
-            volume_name);
+                auth,
+                uc,
+                volume_name);
 
-        // now delete the reservation of rerources
+        // now delete the reservation of resources
         client.deleteReservation(
-            schedulerAddress,
-            auth,
-            uc,
-            volume_name);
+                schedulerAddress,
+                auth,
+                uc,
+                volume_name);
       }
     }
   }

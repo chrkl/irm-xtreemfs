@@ -49,7 +49,6 @@ public abstract class AbstractRequestHandler implements RequestHandler {
     public abstract JSONRPC2Response doProcess(JSONRPC2Request req, MessageContext ctx) throws Exception;
 
     // Processes the requests
-    @Override
     public JSONRPC2Response process(JSONRPC2Request req, MessageContext ctx) {
         try {
             return doProcess(req, ctx);
