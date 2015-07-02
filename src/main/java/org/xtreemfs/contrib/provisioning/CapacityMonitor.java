@@ -40,7 +40,7 @@ public class CapacityMonitor {
                                         monitoringInfo.sslOptions,
                                         monitoringInfo.client);
                                 MRC.StatVFS stat = volume.statFS(monitoringInfo.uc);
-                                long usedCapacity = stat.getBlocks() * stat.getBsize();
+                                long usedCapacity = (stat.getBlocks() - stat.getBfree()) * stat.getBsize();
                                 monitoringInfo.usedCapacity.add(new MonitoringElement(timeStamp, usedCapacity));
                                 volume.close();
                             }
