@@ -39,8 +39,8 @@ public class CapacityMonitor {
                                 Volume volume = LibJSON.openVolume(monitoringInfo.volumeName,
                                         monitoringInfo.sslOptions,
                                         monitoringInfo.client);
-                                MRC.StatVFS stat = volume.statFS(monitoringInfo.uc);
-                                long usedCapacity = (stat.getBlocks() - stat.getBfree()) * stat.getBsize();
+                                String usedCapacityStr = volume.getXAttr(monitoringInfo.uc, "/", "xtreemfs.used_space");
+                                long usedCapacity = Long.valueOf(usedCapacityStr);
                                 monitoringInfo.usedCapacity.add(new MonitoringElement(timeStamp, usedCapacity));
                                 volume.close();
                             }
