@@ -1379,28 +1379,4 @@ public class LibJSON {
       return "localhost";
     }
   }
-
-  private static double getSequentialCost() {
-    if(irmConfig != null) {
-      return irmConfig.getSequentialCost();
-    } else {
-      return 1.0;
-    }
-  }
-
-  private static double getRandomCost() {
-    if(irmConfig != null) {
-      return irmConfig.getRandomCost();
-    } else {
-      return 1.0;
-    }
-  }
-
-  private static double getCapacityCost() {
-    if(irmConfig != null) {
-      return irmConfig.getCapacityCost();
-    } else {
-      return 1.0;
-    }
-  }
 }

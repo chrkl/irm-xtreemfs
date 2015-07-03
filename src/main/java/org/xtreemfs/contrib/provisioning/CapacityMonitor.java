@@ -81,21 +81,6 @@ public class CapacityMonitor {
         return result;
     }
 
-    public long getAvgCapacityUtilization(String volumeName, int begin, int end) {
-        long result = 0L;
-        if (volumes.containsKey(volumeName)) {
-            List<MonitoringElement> elements = volumes.get(volumeName).usedCapacity;
-            int listEnd = (end == -1)?elements.size() - 1:Math.min(end, elements.size() - 1);
-            long sum = 0L;
-            for (int i = begin; i <= listEnd; i++) {
-                MonitoringElement element = elements.get(i);
-                sum += element.capacity;
-            }
-            result = (listEnd - begin > 0L) ? sum / (listEnd - begin) : 0L;
-        }
-        return result;
-    }
-
     private class MonitoringInfo {
         String volumeName;
         int pollInterval;
