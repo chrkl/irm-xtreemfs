@@ -453,13 +453,8 @@ public class LibJSON {
             new Metric(
                 new TypeDesc("Monitor the capacity utilization of the storage devices.", "float"),
                 new TypeDesc("Monitor the throughput utilization of the storage devices.", "float")
-                ),
-            new Aggregation(
-                new TypeDesc("Average of metric.", "float"),
-                new TypeDesc("CDF of metric.", "float(int)")
                 )
-            )
-        );    
+       ));
     return types;
   }
 
@@ -711,15 +706,13 @@ public class LibJSON {
   public static class Monitor implements Serializable {
     private static final long serialVersionUID = -2350617226171778654L;
     public Map<String, Metric> Metrics;
-    public Aggregation Aggregation;
 
     public Monitor() {
       // no-args constructor
     }
     
-    public Monitor(Metric m, Aggregation a) {
+    public Monitor(Metric m) {
       addMetric(m);
-      Aggregation = a;
     }
 
     public void addMetric(Metric r) {
@@ -734,15 +727,6 @@ public class LibJSON {
     public void setMetrics(Map<String, Metric> types) {
       Metrics = types;
     }
-
-    public Aggregation getAggregation() {
-      return Aggregation;
-    }
-
-    public void setAggregation(Aggregation aggregation) {
-      Aggregation = aggregation;
-    }
-
   }
 
   @XmlRootElement(name="Monitor")
@@ -913,46 +897,9 @@ public class LibJSON {
       }
       Instances.put(address,  instance);
     }
-  }  
-  
-  @XmlRootElement(name="Aggregation")
-  @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
-  public static class Aggregation implements Serializable {
-    private static final long serialVersionUID = 5466609348361216509L;
-    public TypeDesc AVG;
-    public TypeDesc CDF;
-
-    public Aggregation() {
-      // no-args constructor
-    }
-
-    public Aggregation(
-        TypeDesc avg,
-        TypeDesc cdf
-        ) {
-      this.AVG = avg;
-      this.CDF = cdf;
-    }
-
-    public TypeDesc getAVG() {
-      return AVG;
-    }
-
-    public void setAVG(TypeDesc capacity) {
-      AVG = capacity;
-    }
-
-    public TypeDesc getCDF() {
-      return CDF;
-    }
-
-    public void setCDF(TypeDesc throughput) {
-      CDF = throughput;
-    }
   }
 
-
-  @XmlRootElement(name="AttributesDesc")
+    @XmlRootElement(name="AttributesDesc")
   @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
   public static class AttributesDesc implements Serializable {
     private static final long serialVersionUID = -1688672880271364789L;
@@ -1285,33 +1232,6 @@ public class LibJSON {
     }
     public void setAccessType(AccessTypes accessType) {
       AccessType = accessType;
-    }
-  }
-
-  @XmlRootElement(name="Cost")
-  @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
-  public static class Cost implements Serializable {
-    private static final long serialVersionUID = -1952012295370219752L;
-    public double Capacity;
-    public double Throughput;
-    public Cost() {
-      // no-args constructor
-    }
-    public Cost(double capacity, double throughput) {
-      this.Capacity = capacity;
-      this.Throughput= throughput;
-    }
-    public double getCapacity() {
-      return Capacity;
-    }
-    public void setCapacity(double capacity) {
-      Capacity = capacity;
-    }
-    public double getThroughput() {
-      return Throughput;
-    }
-    public void setThroughput(double throughput) {
-      Throughput = throughput;
     }
   }
 
