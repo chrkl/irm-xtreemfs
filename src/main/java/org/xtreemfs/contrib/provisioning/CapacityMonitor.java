@@ -75,7 +75,7 @@ public class CapacityMonitor {
             int listBegin = (entry == 0)?0:(entry > 0)?entry:elements.size()+entry;
             for (int i = listBegin; i < elements.size() ; i++) {
                 MonitoringElement element = elements.get(i);
-                result += i + "," + element.timeStamp + "," + element.capacity + "\n";
+                result += i + "," + element.timeStamp + "," + element.capacity;
             }
         }
         return result;
