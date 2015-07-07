@@ -111,7 +111,7 @@ public class JSONRPCTest extends AbstractTestCase {
                     )
         );
 
-    JSONRPC2Response res = callJSONRPC(METHOD.computeCapacity, rc);
+    JSONRPC2Response res = callJSONRPC(METHOD.calculateCapacity, rc);
     ResourceMapper resources = parseResult(res, ResourceMapper.class);
     double capacity = resources.getResource().getAttributes().getCapacity();
     double throughput = resources.getResource().getAttributes().getThroughput();
@@ -163,7 +163,7 @@ public class JSONRPCTest extends AbstractTestCase {
                     )
         );
 
-    JSONRPC2Response res = callJSONRPC(METHOD.computeCapacity, rc);
+    JSONRPC2Response res = callJSONRPC(METHOD.calculateCapacity, rc);
     ResourceMapper resources = parseResult(res, ResourceMapper.class);
 
     assertTrue(resources.getResource() == null);
@@ -207,7 +207,7 @@ public class JSONRPCTest extends AbstractTestCase {
                     )
         );
 
-    JSONRPC2Response res = callJSONRPC(METHOD.computeCapacity, rc);
+    JSONRPC2Response res = callJSONRPC(METHOD.calculateCapacity, rc);
     ResourceMapper resources = parseResult(res, ResourceMapper.class);
     double capacity = resources.getResource().getAttributes().getCapacity();
     double throughput = resources.getResource().getAttributes().getThroughput();

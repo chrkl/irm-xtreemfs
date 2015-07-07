@@ -352,12 +352,12 @@ public class LibJSON {
   }
 
 
-  public static Map<String, Resource> computeCapacity(
-      ResourceCapacity resourceCapacity,
-      String schedulerAddress,
-      UserCredentials uc,
-      Auth auth,
-      Client client) throws IOException {
+  public static Map<String, Resource> calculateCapacity(
+          ResourceCapacity resourceCapacity,
+          String schedulerAddress,
+          UserCredentials uc,
+          Auth auth,
+          Client client) throws IOException {
 
     freeResourcesResponse freeResources
     = client.getFreeResources(

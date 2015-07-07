@@ -86,10 +86,10 @@ public class Rest extends JsonRPC {
     }
 
     @POST
-    @Path("/computeCapacity")
-    public Response<Map<String, Resource>> computeCapacity(ResourceCapacity res) {
+    @Path("/calculateCapacity")
+    public Response<Map<String, Resource>> calculateCapacity(ResourceCapacity res) {
         try {
-            return new Response<Map<String, Resource>>(LibJSON.computeCapacity(
+            return new Response<Map<String, Resource>>(LibJSON.calculateCapacity(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     AbstractRequestHandler.getGroups(),

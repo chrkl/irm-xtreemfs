@@ -37,7 +37,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.logging.Level;
@@ -75,7 +74,7 @@ public class JsonRPC implements ResourceLoaderAware {
      
       getAllocSpec,
         
-      computeCapacity,
+      calculateCapacity,
 
       createReservation,
 
@@ -184,7 +183,7 @@ public class JsonRPC implements ResourceLoaderAware {
             this.dispatcher.register(new AvailableResources(this.client));
 
             this.dispatcher.register(new AllocSpecHandler(this.client));
-            this.dispatcher.register(new ComputeCapacityHandler(this.client));
+            this.dispatcher.register(new CalculateCapacityHandler(this.client));
             this.dispatcher.register(new CalculateResourceAggHandler(this.client));
             this.dispatcher.register(new ReleaseAllReservationsHandler((this.client)));
             this.dispatcher.register(new MetricsHandler((this.client)));
@@ -267,10 +266,10 @@ public class JsonRPC implements ResourceLoaderAware {
     /**
      * Implements a handler for the
      */
-    public class ComputeCapacityHandler extends AbstractRequestHandler {
+    public class CalculateCapacityHandler extends AbstractRequestHandler {
 
-        public ComputeCapacityHandler(Client c) {
-            super(c, new METHOD[]{METHOD.computeCapacity});
+        public CalculateCapacityHandler(Client c) {
+            super(c, new METHOD[]{METHOD.calculateCapacity});
         }
 
         // Processes the requests
@@ -280,7 +279,7 @@ public class JsonRPC implements ResourceLoaderAware {
 
             ResourceCapacity res = gson.fromJson(JSONObject.toJSONString((Map<String, ?>)req.getParams()), ResourceCapacity.class);
 
-            Map<String, Resource> resource = LibJSON.computeCapacity(
+            Map<String, Resource> resource = LibJSON.calculateCapacity(
                     res,
                     LibJSON.generateSchedulerAddress(schedulerAddress),
                     getGroups(),
