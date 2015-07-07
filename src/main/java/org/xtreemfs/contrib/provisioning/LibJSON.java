@@ -105,7 +105,7 @@ public class LibJSON {
     if(volume == null || volume.equals("")) {
       volume = res.getReservationID();
     }
-    String capacityUtilization = capacityMonitor.getCapacityUtilization(volume, 0, -1);
+    String capacityUtilization = capacityMonitor.getCapacityUtilization(volume, res.getEntry());
     HashMap<String, String> metrics = new HashMap<String, String>();
     metrics.put("CAPACITY_UTILIZATION", capacityUtilization);
     //TODO: add THROUGHPUT_UTILIZATION

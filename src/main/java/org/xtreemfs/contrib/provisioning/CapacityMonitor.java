@@ -68,12 +68,12 @@ public class CapacityMonitor {
         this.volumes.remove(volumeName);
     }
 
-    public String getCapacityUtilization(String volumeName, int begin, int end) {
+    public String getCapacityUtilization(String volumeName, int entry) {
         String result = "";
         if (volumes.containsKey(volumeName)) {
             List<MonitoringElement> elements = volumes.get(volumeName).usedCapacity;
-            int listEnd = (end == -1)?elements.size() - 1:Math.min(end, elements.size() - 1);
-            for (int i = begin; i <= listEnd; i++) {
+            int listBegin = (entry == 0)?0:(entry > 0)?entry:elements.size()+entry;
+            for (int i = listBegin; i < elements.size() ; i++) {
                 MonitoringElement element = elements.get(i);
                 result += i + "," + element.timeStamp + "," + element.capacity + "\n";
             }
