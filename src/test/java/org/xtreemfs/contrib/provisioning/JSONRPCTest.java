@@ -480,9 +480,7 @@ public class JSONRPCTest extends AbstractTestCase {
     String response = res.toString();
     assertTrue(response.contains(volume1));
 
-    MetricReq metricResource = new MetricReq(
-        Arrays.asList(new String[]{ resources.getReservationID().iterator().next() }),
-        Arrays.asList(new Integer[]{ 0 }));
+    MetricReq metricResource = new MetricReq("", resources.getReservationID().iterator().next(), 0);
 
     JSONRPC2Response metricRes = callJSONRPC(METHOD.getMetrics, metricResource);
     checkSuccess(metricRes, false);

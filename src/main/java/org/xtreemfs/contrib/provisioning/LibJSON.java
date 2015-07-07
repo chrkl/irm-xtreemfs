@@ -101,22 +101,15 @@ public class LibJSON {
       Client client
       ) {
     MetricResp response = new MetricResp();
-    
-    for (int i = 0; i < res.Address.size(); i++) {
-      String address = res.Address.get(i);
-      int entry = 0;
-      if(res.Entry.size() >= i) {
-        entry = res.Entry.get(i);
-      }
-
-      //TODO: Check which monitors should be active
-      HashMap<String, String> metric = new HashMap<String, String>();
-      String capacityUtilization = capacityMonitor.getCapacityUtilization(stripVolumeName(address), 0, -1);
-
-      metric.put("CAPACITY_UTILIZATION", capacityUtilization);
-
-      response.addInstance(address, metric);
+    String volume = stripVolumeName(res.getAddress());
+    if(volume == null || volume.equals("")) {
+      volume = res.getReservationID();
     }
+    String capacityUtilization = capacityMonitor.getCapacityUtilization(volume, 0, -1);
+    HashMap<String, String> metrics = new HashMap<String, String>();
+    metrics.put("CAPACITY_UTILIZATION", capacityUtilization);
+    //TODO: add THROUGHPUT_UTILIZATION
+    response.setMetrics(metrics);
     return response;
   }
   
@@ -836,35 +829,33 @@ public class LibJSON {
   @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
   public static class MetricReq implements Serializable {
     private static final long serialVersionUID = -512416243565655226L;
-    public List<String> Address;
-    public List<Integer> Entry;
+    public String Address;
+    public String ReservationID;
+    public int Entry;
     public MetricReq() {
       // no-args constructor
     }
-    public MetricReq(List<String> addresses, List<Integer> entry) {
-      this.Address = addresses;
+    public MetricReq(String reservationID, String addresse, int entry) {
+      this.ReservationID = reservationID;
+      this.Address = addresse;
       this.Entry = entry;
     }
-    public MetricReq(String[] addresses, Integer[] entry) {
-      this.Address = Arrays.asList(addresses);
-      this.Entry = Arrays.asList(entry);
+    public String getReservationID() {
+      return ReservationID;
     }
-    public MetricReq(String address, int entry) {
-      this.Address = new ArrayList<String>();
-      this.Address.add(address);
-      this.Entry = new ArrayList<Integer>();
-      this.Entry.add(entry);
+    public void setReservationID(String reservationID) {
+      this.ReservationID = reservationID;
     }
-    public List<String> getAddress() {
+    public String getAddress() {
       return Address;
     }
-    public void setAddress(List<String> addresses) {
+    public void setAddress(String addresses) {
       Address = addresses;
     }
-    public List<Integer> getEntry() {
+    public int getEntry() {
       return Entry;
     }
-    public void setEntry(List<Integer> entry) {
+    public void setEntry(int entry) {
       Entry = entry;
     }
   }
@@ -874,32 +865,22 @@ public class LibJSON {
   public static class MetricResp implements Serializable {
     private static final long serialVersionUID = 1603978614536722497L;
 
-        public Map<String, Map<String, String>> Instances;
+    public Map<String, String> Metrics;
     public MetricResp() {
       // no-args constructor
     }
-    public MetricResp(Map<String, Map<String, String>> instances) {
-      this.Instances = instances;
+    public MetricResp(Map<String, String> metrics) {
+      this.Metrics = metrics;
     }
-    public MetricResp(String address, Map<String, String> entry) {
-      addInstance(address, entry);
+    public Map<String, String> getMetrics() {
+      return Metrics;
     }
-    public Map<String, Map<String, String>> getInstances() {
-      return Instances;
-    }
-    public void setInstances(Map<String, Map<String, String>> instances) {
-      Instances = instances;
-    }
-    
-    public void addInstance(String address, Map<String, String> instance) {
-      if (Instances == null) {
-        Instances = new LinkedHashMap<String, Map<String, String>>();
-      }
-      Instances.put(address,  instance);
+    public void setMetrics(Map<String, String> metrics) {
+      this.Metrics = metrics;
     }
   }
 
-    @XmlRootElement(name="AttributesDesc")
+  @XmlRootElement(name="AttributesDesc")
   @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
   public static class AttributesDesc implements Serializable {
     private static final long serialVersionUID = -1688672880271364789L;
