@@ -512,7 +512,7 @@ public class JsonRPC implements ResourceLoaderAware {
         String url = getAddManagerURL(crsUrl);
         Webb webb = Webb.create();
         com.goebl.david.Response response = webb.post(url).header("Content-Type", "application/json")
-                .body("{\"Address\": \"" + LibJSON.getMyAddress() + "\", \"Port\": \"8080\", \"Name\": \"IRM-XtreemFS\"}")
+                .body("{\"Address\": \"" + LibJSON.getMyAddress() + "\", \"Port\": \"30080\", \"Name\": \"IRM-XtreemFS\"}")
                 .asJsonObject();
         response.getBody();
     }
