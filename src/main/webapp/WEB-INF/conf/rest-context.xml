@@ -6,7 +6,7 @@
         xmlns:jaxrs="http://cxf.apache.org/jaxrs"
         xsi:schemaLocation="
             http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
-            http://www.springframework.org/schema/beans 
+            http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
             http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
@@ -20,19 +20,19 @@
         </cxf:features>
     </cxf:bus>
 
-    <!-- >bean id="restInterface" 
+    <!-- >bean id="restInterface"
         class="org.xtreemfs.contrib.provisioning.Rest">
     </bean-->
 
-    <bean id="xtreemFSService" 
+    <bean id="xtreemFSService"
         class="org.xtreemfs.contrib.provisioning.Rest">
         <!-- property name="userDao" ref="userDao"/-->
     </bean>
 
-    <bean id="jsonProvider" 
+    <bean id="jsonProvider"
         class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-    
-    <jaxrs:server id="xtreemFSREST" address="/method">
+
+    <jaxrs:server id="xtreemFSREST" address="/">
         <jaxrs:serviceBeans>
             <ref bean="xtreemFSService"/>
         </jaxrs:serviceBeans>
