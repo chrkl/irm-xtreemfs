@@ -518,12 +518,12 @@ public class JsonRPC implements ResourceLoaderAware {
     }
 
     private String getAddManagerURL(String crsUrl) {
-        if(crsUrl.endsWith("/addManager")) {
+        if(crsUrl.endsWith("/registerManager")) {
             return crsUrl;
         } else if (crsUrl.endsWith("/")) {
-            return crsUrl + "addManager";
+            return crsUrl + "registerManager";
         } else {
-            return crsUrl + "/addManager";
+            return crsUrl + "/registerManager";
         }
     }
 }
