@@ -160,10 +160,12 @@ public class LibJSON {
                   createNormedVolumeName(volume_name, dirAddresses)
           ));
 
-          if(res.getMonitor().Storage.containsKey("CAPACITY_UTILIZATION")) {
-            int pollInterval = (res.getMonitor().PollTime / 1000) *
-                    res.getMonitor().getStorage().get("CAPACITY_UTILIZATION").getPollTimeMultiplier();
-            LibJSON.capacityMonitor.addVolume(client, sslOptions, uc, auth, volume_name, pollInterval);
+          if(res.Monitor != null) {
+              if (res.getMonitor().Storage.containsKey("CAPACITY_UTILIZATION")) {
+                  int pollInterval = (res.getMonitor().PollTime / 1000) *
+                          res.getMonitor().getStorage().get("CAPACITY_UTILIZATION").getPollTimeMultiplier();
+                  LibJSON.capacityMonitor.addVolume(client, sslOptions, uc, auth, volume_name, pollInterval);
+              }
           }
         }
       }
