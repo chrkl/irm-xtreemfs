@@ -2,6 +2,7 @@ package org.xtreemfs.contrib.provisioning;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.xtreemfs.common.libxtreemfs.Client;
 import org.xtreemfs.common.libxtreemfs.Options;
@@ -161,7 +162,7 @@ public class LibJSON {
                   createNormedVolumeName(volume_name, dirAddresses)
           ));
 
-          if(res.Monitor != null) {
+          if(res.Monitor != null && res.Monitor.Storage != null) {
               if (res.getMonitor().Storage.containsKey("CAPACITY_UTILIZATION")) {
                   int pollInterval = (res.getMonitor().PollTime / 1000) *
                           res.getMonitor().getStorage().get("CAPACITY_UTILIZATION").getPollTimeMultiplier();
@@ -1072,6 +1073,7 @@ public class LibJSON {
 
   @XmlRootElement(name="Allocation")
   @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
+  @JsonIgnoreProperties(ignoreUnknown = true)
   public static class Allocation implements Serializable {
     private static final long serialVersionUID = 9199843708622395018L;
     public List<Resource> Allocation;
