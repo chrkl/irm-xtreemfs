@@ -36,12 +36,13 @@ public class CapacityMonitor {
                         for(MonitoringInfo monitoringInfo: volumes.values()) {
                             long timeStamp = System.currentTimeMillis();
                             if(monitoringInfo.lastCheck + monitoringInfo.pollInterval * 1000 <= timeStamp) {
+                                monitoringInfo.lastCheck = timeStamp;
                                 Volume volume = LibJSON.openVolume(monitoringInfo.volumeName,
                                         monitoringInfo.sslOptions,
                                         monitoringInfo.client);
                                 String usedCapacityStr = volume.getXAttr(monitoringInfo.uc, "/", "xtreemfs.used_space");
                                 long usedCapacity = Long.valueOf(usedCapacityStr);
-                                monitoringInfo.usedCapacity.add(new MonitoringElement(timeStamp, usedCapacity));
+                                monitoringInfo.usedCapacity.add(new MonitoringElement(timeStamp / 1000, usedCapacity));
                                 volume.close();
                             }
                         }
@@ -75,7 +76,7 @@ public class CapacityMonitor {
             int listBegin = (entry == 0)?0:(entry > 0)?entry:elements.size()+entry;
             for (int i = listBegin; i < elements.size() ; i++) {
                 MonitoringElement element = elements.get(i);
-                result += i + "," + element.timeStamp + "," + element.capacity;
+                result += (i+1) + "," + element.timeStamp + "," + element.capacity + "\n";
             }
         }
         return result;
