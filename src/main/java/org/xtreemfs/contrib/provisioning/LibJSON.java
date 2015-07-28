@@ -767,7 +767,7 @@ public class LibJSON {
       public Type(int pollTimeMultiplier, String aggregation) {
         this.PollTimeMultiplier = pollTimeMultiplier;
         addAggregation(aggregation);
-    }
+      }
       public int getPollTimeMultiplier() {
         return PollTimeMultiplier;
       }
