@@ -2,6 +2,7 @@ package org.xtreemfs.contrib.provisioning;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.xtreemfs.common.libxtreemfs.Client;
 import org.xtreemfs.common.libxtreemfs.Options;
 import org.xtreemfs.common.libxtreemfs.Volume;
@@ -1220,6 +1221,7 @@ public class LibJSON {
 
   @XmlRootElement(name="Response")
   @JsonAutoDetect(fieldVisibility = Visibility.ANY, isGetterVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
+  @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
   public static class Response<E> implements Serializable {
     private static final long serialVersionUID = 4850691130923087378L;
     public E result;
