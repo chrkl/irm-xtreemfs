@@ -105,7 +105,7 @@ public class LibJSON {
     MetricResp response = new MetricResp();
     String volume = stripVolumeName(res.getAddress());
     if(volume == null || volume.equals("")) {
-      volume = res.getReservationID();
+      volume = stripVolumeName(res.getReservationID());
     }
     String capacityUtilization = capacityMonitor.getCapacityUtilization(volume, res.getEntry());
     HashMap<String, String> metrics = new HashMap<String, String>();
@@ -135,7 +135,7 @@ public class LibJSON {
           AccessTypes accessType = resource.Attributes.AccessType != null?resource.Attributes.AccessType:AccessTypes.SEQUENTIAL;
           boolean randomAccess = accessType == AccessTypes.RANDOM;
 
-          int octalMode = Integer.parseInt("700", 8);
+          int octalMode = Integer.parseInt("777", 8);
 
           String volume_name = "volume-"+UUID.randomUUID().toString();
 
