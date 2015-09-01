@@ -453,7 +453,7 @@ public class JSONRPCTest extends AbstractTestCase {
     System.out.println("getMetric");
 
     // create a volume
-    Allocation resource = new Allocation(
+    Allocation resource1 = new Allocation(
         new Resource(
             "/"+dirAddress+"/storage/random",
             "Storage",
@@ -468,24 +468,63 @@ public class JSONRPCTest extends AbstractTestCase {
                     1000
                     ));
 
-    JSONRPC2Response res = callJSONRPC(METHOD.createReservation, gson.toJson(resource));
-    checkSuccess(res, false);
-    ReservationID resources = parseResult(res, ReservationID.class);
-    String volume1 = LibJSON.stripVolumeName(resources.getReservationID().iterator().next());
+     Allocation resource2 = new Allocation(
+        new Resource(
+            "/"+dirAddress+"/storage/random",
+            "Storage",
+            null,
+            new Attributes(
+                100.0,
+                10.0,
+                AccessTypes.RANDOM)),
+                new LibJSON.MonitorCreate(
+                    "CAPACITY_UTILIZATION",
+                    new LibJSON.Type(1, ""),
+                    1000
+                    ));
+
+    JSONRPC2Response res1 = callJSONRPC(METHOD.createReservation, gson.toJson(resource1));
+    checkSuccess(res1, false);
+    ReservationID resources1 = parseResult(res1, ReservationID.class);
+    String volume1 = LibJSON.stripVolumeName(resources1.getReservationID().iterator().next());
+
+    JSONRPC2Response res2 = callJSONRPC(METHOD.createReservation, gson.toJson(resource2));
+    checkSuccess(res2, false);
+    ReservationID resources2 = parseResult(res2, ReservationID.class);
+    String volume2 = LibJSON.stripVolumeName(resources2.getReservationID().iterator().next());
 
     try {
       Thread.sleep(3000);
     } catch(InterruptedException ex) {}
 
-    String response = res.toString();
-    assertTrue(response.contains(volume1));
+    String response1 = res1.toString();
+    assertTrue(response1.contains(volume1));
 
-    MetricReq metricResource = new MetricReq("", resources.getReservationID().iterator().next(), 0);
+    MetricReq metricResource1 = new MetricReq("", resources1.getReservationID().iterator().next(), 0);
 
-    JSONRPC2Response metricRes = callJSONRPC(METHOD.getMetrics, metricResource);
-    checkSuccess(metricRes, false);
+    JSONRPC2Response metricRes1 = callJSONRPC(METHOD.getMetrics, metricResource1);
+    checkSuccess(metricRes1, false);
     
-    MetricResp result2 = parseResult(metricRes, MetricResp.class);
+    MetricResp result1 = parseResult(metricRes1, MetricResp.class);
+
+    metricResource1 = new MetricReq("", resources1.getReservationID().iterator().next(), 1);
+    metricRes1 = callJSONRPC(METHOD.getMetrics, metricResource1);
+    checkSuccess(metricRes1, false);
+
+
+    String response2 = res2.toString();
+    assertTrue(response2.contains(volume2));
+
+    MetricReq metricResource2 = new MetricReq("", resources2.getReservationID().iterator().next(), 0);
+
+    JSONRPC2Response metricRes2 = callJSONRPC(METHOD.getMetrics, metricResource2);
+    checkSuccess(metricRes2, false);
+
+    MetricResp result2 = parseResult(metricRes2, MetricResp.class);
+
+    metricResource2 = new MetricReq("", resources2.getReservationID().iterator().next(), 1);
+    metricRes2 = callJSONRPC(METHOD.getMetrics, metricResource2);
+    checkSuccess(metricRes2, false);
   }
 
 }
