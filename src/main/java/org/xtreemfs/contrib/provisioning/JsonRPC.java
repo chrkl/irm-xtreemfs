@@ -516,7 +516,8 @@ public class JsonRPC implements ResourceLoaderAware {
                 .asJsonObject();
         response.getBody();
         if(response.getStatusCode() >= 400) {
-            throw new Exception("Registration at CRS failed with status code " + response.getStatusCode());
+            throw new Exception("Registration at CRS "+ crsUrl + " failed with status code " + response.getStatusCode()
+            + "\n" + response.getResponseMessage());
         }
     }
 
