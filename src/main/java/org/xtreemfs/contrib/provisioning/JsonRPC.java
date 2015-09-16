@@ -515,6 +515,9 @@ public class JsonRPC implements ResourceLoaderAware {
                 .body("{\"Address\": \"" + LibJSON.getMyAddress() + "\", \"Port\": \"30080\", \"Name\": \"IRM-XtreemFS\"}")
                 .asJsonObject();
         response.getBody();
+        if(response.getStatusCode() >= 400) {
+            throw new Exception("Registration at CRS failed with status code " + response.getStatusCode());
+        }
     }
 
     private String getAddManagerURL(String crsUrl) {
