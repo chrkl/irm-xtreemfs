@@ -500,14 +500,14 @@ public class JSONRPCTest extends AbstractTestCase {
     String response1 = res1.toString();
     assertTrue(response1.contains(volume1));
 
-    MetricReq metricResource1 = new MetricReq("", resources1.getReservationID().iterator().next(), 0);
+    MetricReq metricResource1 = new MetricReq("", resources1.getReservationID().iterator().next(), 1);
 
     JSONRPC2Response metricRes1 = callJSONRPC(METHOD.getMetrics, metricResource1);
     checkSuccess(metricRes1, false);
     
     MetricResp result1 = parseResult(metricRes1, MetricResp.class);
 
-    metricResource1 = new MetricReq("", resources1.getReservationID().iterator().next(), 1);
+    metricResource1 = new MetricReq("", resources1.getReservationID().iterator().next(), 2);
     metricRes1 = callJSONRPC(METHOD.getMetrics, metricResource1);
     checkSuccess(metricRes1, false);
 
@@ -515,14 +515,14 @@ public class JSONRPCTest extends AbstractTestCase {
     String response2 = res2.toString();
     assertTrue(response2.contains(volume2));
 
-    MetricReq metricResource2 = new MetricReq("", resources2.getReservationID().iterator().next(), 0);
+    MetricReq metricResource2 = new MetricReq("", resources2.getReservationID().iterator().next(), 1);
 
     JSONRPC2Response metricRes2 = callJSONRPC(METHOD.getMetrics, metricResource2);
     checkSuccess(metricRes2, false);
 
     MetricResp result2 = parseResult(metricRes2, MetricResp.class);
 
-    metricResource2 = new MetricReq("", resources2.getReservationID().iterator().next(), 1);
+    metricResource2 = new MetricReq("", resources2.getReservationID().iterator().next(), -1);
     metricRes2 = callJSONRPC(METHOD.getMetrics, metricResource2);
     checkSuccess(metricRes2, false);
   }

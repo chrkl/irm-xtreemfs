@@ -76,7 +76,8 @@ public class CapacityMonitor {
         if (volumes.containsKey(volumeName)) {
             MonitoringInfo monitoringInfo = volumes.get(volumeName);
             List<MonitoringElement> elements = monitoringInfo.usedCapacity;
-            int listBegin = (entry == 0)?0:(entry > 0)?entry:elements.size()+entry;
+            int listBegin = (entry < 0)?(elements.size() + entry):Math.max(entry-1,0);
+
             for (int i = listBegin; i < elements.size() ; i++) {
                 MonitoringElement element = elements.get(i);
                 result += (i+1) + "," + element.timeStamp + ","
