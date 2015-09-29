@@ -61,8 +61,10 @@ public class CapacityMonitor {
                           SSLOptions sslOptions,
                           RPC.UserCredentials uc,
                           RPC.Auth auth,String volumeName,
-                          int pollInterval) {
-        this.volumes.putIfAbsent(volumeName, new MonitoringInfo(client, sslOptions, uc, auth, volumeName, pollInterval));
+                          int pollInterval,
+                          long reservedCapacity) {
+        this.volumes.putIfAbsent(volumeName, new MonitoringInfo(client, sslOptions, uc, auth, volumeName, pollInterval,
+                reservedCapacity));
     }
 
     public void removeVolume(String volumeName) {
@@ -72,11 +74,13 @@ public class CapacityMonitor {
     public String getCapacityUtilization(String volumeName, int entry) {
         String result = "";
         if (volumes.containsKey(volumeName)) {
-            List<MonitoringElement> elements = volumes.get(volumeName).usedCapacity;
+            MonitoringInfo monitoringInfo = volumes.get(volumeName);
+            List<MonitoringElement> elements = monitoringInfo.usedCapacity;
             int listBegin = (entry == 0)?0:(entry > 0)?entry:elements.size()+entry;
             for (int i = listBegin; i < elements.size() ; i++) {
                 MonitoringElement element = elements.get(i);
-                result += (i+1) + "," + element.timeStamp + "," + element.capacity + "\n";
+                result += (i+1) + "," + element.timeStamp + ","
+                        + Math.min(100, element.capacity * 100 / monitoringInfo.reservedCapacity) + "\n";
             }
         }
         return result;
@@ -91,13 +95,15 @@ public class CapacityMonitor {
         SSLOptions sslOptions;
         RPC.UserCredentials uc;
         RPC.Auth auth;
+        long reservedCapacity;
 
         public MonitoringInfo(Client client,
                               SSLOptions sslOptions,
                               RPC.UserCredentials uc,
                               RPC.Auth auth,
                               String volumeName,
-                              int pollInterval) {
+                              int pollInterval,
+                              long reservedCapacity) {
             this.client = client;
             this.sslOptions = sslOptions;
             this.uc = uc;
@@ -106,6 +112,7 @@ public class CapacityMonitor {
             this.pollInterval = pollInterval;
             this.usedCapacity = new ArrayList<MonitoringElement>();
             this.lastCheck = 0L;
+            this.reservedCapacity = reservedCapacity;
         }
     }
 
