@@ -159,7 +159,8 @@ public class LibJSON {
           // create a string similar to:
           // [<protocol>://]<DIR-server-address>[:<DIR-server-port>]/<Volume Name>
           reservations.addAll(new ReservationID(
-                  createNormedVolumeName(volume_name, dirAddresses)
+                  //createNormedVolumeName(volume_name, dirAddresses)
+                  volume_name
           ));
 
           if(res.Monitor != null && res.Monitor.Storage != null) {
